@@ -1,7 +1,7 @@
 %errorA = ForceRequiredAddOn("Vehicle_Tank");
 %errorB = ForceRequiredAddOn("Weapon_Rocket_Launcher");
 %errorC = ForceRequiredAddOn("Projectile_GravityRocket");
-%errorD = ForceRequiredAddOn("Vehicle_PirateCannon");
+%errorD = ForceRequiredAddOn("Vehicle_Pirate_Cannon");
 
 if(%errorA == $Error::AddOn_Disabled)
    TankVehicle.uiName = "";

@@ -1,6 +1,7 @@
 %errorA = ForceRequiredAddOn("Vehicle_Tank");
 %errorB = ForceRequiredAddOn("Weapon_Rocket_Launcher");
 %errorC = ForceRequiredAddOn("Projectile_GravityRocket");
+%errorD = ForceRequiredAddOn("Vehicle_PirateCannon");
 
 if(%errorA == $Error::AddOn_Disabled)
    TankVehicle.uiName = "";
@@ -15,5 +16,7 @@ else if(%errorB == $Error::AddOn_NotFound)
    error("ERROR: Vehicle_LRCannon - required add-on Weapon_Rocket_Launcher not found");
 else if(%errorC == $Error::AddOn_NotFound)
    error("ERROR: Vehicle_LRCannon - required add-on Projectile_GravityRocket not found");
+else if(%errorD == $Error::AddOn_NotFound)
+   error("ERROR: Vehicle_LRCannon - required add-on Vehicle_PirateCannon not found");
 else
    exec("./Vehicle_LRCannon.cs"); 

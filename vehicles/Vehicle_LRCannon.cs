@@ -1,6 +1,6 @@
 //Cannon! Thank you Ephi for being sexy, and saving me the trouble of having to program most of this.
 exec("./player.cs");
-datablock PlayerData(CannonTurret : PlayerStandardArmor)
+datablock PlayerData(LRCannonTurret : PlayerStandardArmor)
 {
 	cameraVerticalOffset = 3;
 	shapefile = "./LRCannon.dts";
@@ -12,7 +12,7 @@ datablock PlayerData(CannonTurret : PlayerStandardArmor)
    density = 5;
    runSurfaceAngle = 1;
    jumpSurfaceAngle = 0;
-   maxForwardSpeed = 5;
+   maxForwardSpeed = 0;
    maxBackwardSpeed = 0;
    maxBackwardCrouchSpeed = 0;
    maxForwardCrouchSpeed = 0;
@@ -60,326 +60,31 @@ datablock PlayerData(CannonTurret : PlayerStandardArmor)
 };
 
 
-datablock ParticleData(cannonBallTrailParticle)
-{
-	dragCoefficient		= 3.0;
-	windCoefficient		= 0.0;
-	gravityCoefficient	= 0.0;
-	inheritedVelFactor	= 0.0;
-	constantAcceleration	= 0.0;
-	lifetimeMS		= 250;
-	lifetimeVarianceMS	= 0;
-	spinSpeed		= 10.0;
-	spinRandomMin		= -50.0;
-	spinRandomMax		= 50.0;
-	useInvAlpha		= true;
-	animateTexture		= false;
-	//framesPerSec		= 1;
-
-	textureName		= "base/data/particles/dot";
-	//animTexName		= "~/data/particles/dot";
-
-	// Interpolation variables
-	colors[0]	= "0.2 0.2 0.2 0.1";
-	colors[1]	= "0.2 0.2 0.2 0.0";
-	sizes[0]	= 0.8;
-	sizes[1]	= 0.0;
-	times[0]	= 0.0;
-	times[1]	= 1.0;
-};
-
-datablock ParticleEmitterData(cannonBallTrailEmitter)
-{
-   ejectionPeriodMS = 5;
-   periodVarianceMS = 0;
-
-   ejectionVelocity = 0; //0.25;
-   velocityVariance = 0; //0.10;
-
-   ejectionOffset = 0;
-
-   thetaMin         = 0.0;
-   thetaMax         = 90.0;  
-
-   particles = cannonBallTrailParticle;
-
-   useEmitterColors = true;
-   uiName = "Cannon Ball Trail";
-};
 
 
-datablock ParticleData(CannonSmokeParticle)
-{
-	dragCoefficient      = 3;
-	gravityCoefficient   = -1;
-	inheritedVelFactor   = 0.6;
-	constantAcceleration = 0.0;
-	lifetimeMS           = 1200;
-	lifetimeVarianceMS   = 55;
-	textureName          = "base/data/particles/cloud";
-	spinSpeed		= 10.0;
-	spinRandomMin		= -500.0;
-	spinRandomMax		= 500.0;
-	colors[0]     = "0.5 0.5 0.5 0.2";
-	colors[1]     = "0.5 0.5 0.5 0.0";
-	sizes[0]      = 1.0;
-	sizes[1]      = 1.2;
 
-	useInvAlpha = true;
-};
 
-datablock ParticleEmitterData(CannonSmokeEmitter)
-{
-   ejectionPeriodMS = 40;
-   periodVarianceMS = 4;
-   ejectionVelocity = 3;
-   velocityVariance = 2;
-   ejectionOffset   = 0;
-   thetaMin         = 0;
-   thetaMax         = 50;
-   phiReferenceVel  = 0;
-   phiVariance      = 360;
-   overrideAdvance = false;
-   particles = "CannonSmokeParticle";
 
-   uiName = "Cannon Smoke";
-};
-
-datablock ShapeBaseImageData(CannonSmokeImage : TankSmokeImage)
-{
-   offset = "0 0 0.5";
-   rotation = eulerToMatrix("90 0 0");
-
-   stateTimeoutValue[3]          = 2.0;
-	stateEmitter[3]               = CannonSmokeEmitter;
-	stateEmitterTime[3]           = 2.0;
-};
 function CannonSmokeImage::onDone(%this,%obj,%slot)
 {
 	%obj.unMountImage(%slot);
 }
 
-datablock AudioProfile(WhistleLoopSound)
-{
-   filename    = "./whistle.wav";
-   description = AudioDefaultLooping3d;
-   preload = true;
-};
 
 AddDamageType("LRCannonBallDirect",   '<bitmap:add-ons/Vehicle_Pirate_Cannon/ball> %1',       '%2 <bitmap:add-ons/Vehicle_Pirate_Cannon/ball> %1',       1, 1);
 AddDamageType("LRCannonBallRadius",   '<bitmap:add-ons/Vehicle_Pirate_Cannon/ballRadius> %1', '%2 <bitmap:add-ons/Vehicle_Pirate_Cannon/ballRadius> %1', 1, 0);
-datablock ProjectileData(LRCannonBallProjectile)
-{
-   projectileShapeName = "./CannonBall.dts";
-   directDamage        = 100;
-   directDamageType = $DamageType::CannonBallDirect;
-   radiusDamageType = $DamageType::CannonBallRadius;
-   impactImpulse	   = 1000;
-   verticalImpulse	   = 1000;
-   explosion           = TankShellExplosion;
-   particleEmitter     = cannonBallTrailEmitter;
-
-   brickExplosionRadius = 5;
-   brickExplosionImpact = true;          //destroy a brick if we hit it directly?
-   brickExplosionForce  = 50;             
-   brickExplosionMaxVolume = 60;          //max volume of bricks that we can destroy
-   brickExplosionMaxVolumeFloating = 120;  //max volume of bricks that we can destroy if they aren't connected to the ground (should always be >= brickExplosionMaxVolume)
-
-   sound = WhistleLoopSound;
-
-   muzzleVelocity      = 450;
-   velInheritFactor    = 1.0;
-
-   armingDelay         = 0;
-   lifetime            = 10000;
-   fadeDelay           = 10000;
-   bounceElasticity    = 0.5;
-   bounceFriction      = 0.20;
-   isBallistic         = true;
-   gravityMod = 0.5;
-
-   hasLight    = false;
-   lightRadius = 5.0;
-   lightColor  = "1 0.5 0.0";
-
-   explodeOnDeath = 1;
-
-   uiName = "Cannon Ball"; //naming it this way because it's a cannon ball
-};
 
 
 
-datablock ParticleData(cannonFuseAParticle)
-{
-	dragCoefficient      = 3;
-	gravityCoefficient   = 0.0;
-	inheritedVelFactor   = 0.2;
-	constantAcceleration = 0.0;
-	lifetimeMS           = 150;
-	lifetimeVarianceMS   = 15;
-	textureName          = "base/data/particles/cloud";
-	spinSpeed		= 10.0;
-	spinRandomMin		= -500.0;
-	spinRandomMax		= 500.0;
-	colors[0]     = "0.9 0.0 0.0 0.9";
-	colors[1]     = "0.9 0.7 0.0 0.0";
-	sizes[0]      = 0.051;
-	sizes[1]      = 0.021;
-
-	useInvAlpha = false;
-};
-datablock ParticleEmitterData(cannonFuseAEmitter)
-{
-   ejectionPeriodMS = 3;
-   periodVarianceMS = 0;
-   ejectionVelocity = 2.0;
-   velocityVariance = 1.0;
-   ejectionOffset   = 0.0;
-   thetaMin         = 0;
-   thetaMax         = 20;
-   phiReferenceVel  = 0;
-   phiVariance      = 360;
-   overrideAdvance = false;
-   particles = "cannonFuseAParticle";
-
-   uiName = "Cannon Fuse A";
-};
-
-datablock ParticleData(cannonFuseBParticle)
-{
-	dragCoefficient      = 3;
-	gravityCoefficient   = -0.5;
-	inheritedVelFactor   = 0.2;
-	constantAcceleration = 0.0;
-	lifetimeMS           = 50;
-	lifetimeVarianceMS   = 15;
-	textureName          = "base/data/particles/star1";
-	spinSpeed		= 10.0;
-	spinRandomMin		= -500.0;
-	spinRandomMax		= 500.0;
-	colors[0]     = "0.9 0.7 0.0 0.9";
-	colors[1]     = "0.9 0.2 0.0 0.0";
-	sizes[0]      = 0.2;
-	sizes[1]      = 0.3;
-
-	useInvAlpha = false;
-};
-datablock ParticleEmitterData(cannonFuseBEmitter)
-{
-   ejectionPeriodMS = 3;
-   periodVarianceMS = 0;
-   ejectionVelocity = 1.0;
-   velocityVariance = 1.0;
-   ejectionOffset   = 0.0;
-   thetaMin         = 0;
-   thetaMax         = 20;
-   phiReferenceVel  = 0;
-   phiVariance      = 360;
-   overrideAdvance = false;
-   particles = "cannonFuseBParticle";
-
-   uiName = "Cannon Fuse B";
-};
-
-datablock ParticleData(cannonFuseCParticle)
-{
-	dragCoefficient      = 3;
-	gravityCoefficient   = -0.5;
-	inheritedVelFactor   = 0.2;
-	constantAcceleration = 0.0;
-	lifetimeMS           = 50;
-	lifetimeVarianceMS   = 15;
-	textureName          = "base/data/particles/star1";
-	spinSpeed		= 100.0;
-	spinRandomMin		= -500.0;
-	spinRandomMax		= 500.0;
-	colors[0]     = "0.9 0.7 0.0 0.9";
-	colors[1]     = "0.9 0.2 0.0 0.0";
-	sizes[0]      = 0.5;
-	sizes[1]      = 0.7;
-
-	useInvAlpha = false;
-};
-datablock ParticleEmitterData(cannonFuseCEmitter)
-{
-   ejectionPeriodMS = 3;
-   periodVarianceMS = 0;
-   ejectionVelocity = 1.0;
-   velocityVariance = 1.0;
-   ejectionOffset   = 0.0;
-   thetaMin         = 0;
-   thetaMax         = 20;
-   phiReferenceVel  = 0;
-   phiVariance      = 360;
-   overrideAdvance = false;
-   particles = "cannonFuseCParticle";
-
-   uiName = "Cannon Fuse C";
-};
-
-datablock ShapeBaseImageData(CannonFuseImage)
-{
-	shapeFile = "base/data/shapes/empty.dts";
-	emap = false;
-
-	mountPoint = 1;
-   offset = "0 -0.45 -3.2";
-   rotation = eulerToMatrix("180 0 0");
-
-	stateName[0]                  = "Ready";
-	stateTransitionOnTimeout[0]   = "FireA";
-	stateTimeoutValue[0]          = 0.01;
-
-	stateName[1]                  = "FireA";
-	stateTransitionOnTimeout[1]   = "FireB";
-	stateWaitForTimeout[1]        = True;
-	stateTimeoutValue[1]          = 0.9;
-	stateEmitter[1]               = cannonFuseAEmitter;
-	stateEmitterTime[1]           = 0.9;
-
-	stateName[2]                  = "FireB";
-	stateTransitionOnTimeout[2]   = "FireC";
-	stateWaitForTimeout[2]        = True;
-	stateTimeoutValue[2]          = 0.9;
-	stateEmitter[2]               = cannonFuseBEmitter; 
-	stateEmitterTime[2]           = 0.9;
-
-	stateName[3]                  = "FireC";
-	stateTransitionOnTimeout[3]   = "Done";
-	stateWaitForTimeout[3]        = True;
-	stateTimeoutValue[3]          = 20.0;
-	stateEmitter[3]               = cannonFuseCEmitter;
-	stateEmitterTime[3]           = 20.0;
-
-	stateName[4]                  = "Done";
-	stateScript[4]                = "onDone";
-};
 
 function CannonFuseImage::onDone(%this,%obj,%slot)
 {
 	%obj.unMountImage(%slot);
 }
 
-datablock DebrisData(CannonDebris)
-{
-   //emitters = "jeepDebrisTrailEmitter";
-   emitters = "";
 
-	shapeFile = "./cannonDebris.dts";
-	lifetime = 3.5;
-	minSpinSpeed = -300.0;
-	maxSpinSpeed = 300.0;
-	elasticity = 0.5;
-	friction = 0.2;
-	numBounces = 1;
-	staticOnMaxBounce = true;
-	snapOnMaxBounce = false;
-	fade = true;
 
-	gravModifier = 2;
-};
-
-datablock ExplosionData(CannonBaseExplosion)
+datablock ExplosionData(LRCannonBaseExplosion)
 {
    //explosionShape = "";
    lifeTimeMS = 150;
@@ -422,11 +127,11 @@ datablock ExplosionData(CannonBaseExplosion)
    impulseVertical = 2000;
 
    //radius damage
-   radiusDamage        = 30;
-   damageRadius        = 8.0;
+   radiusDamage        = 40;
+   damageRadius        = 4.0;
 
    //burn the players?
-   playerBurnTime = 5000;
+   playerBurnTime = 1000;
 
 };
 
